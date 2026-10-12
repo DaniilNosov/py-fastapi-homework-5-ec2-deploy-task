@@ -1,0 +1,23 @@
+name: Deploy to Amazon EC2
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Executing remote ssh commands to deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/src/py-fastapi-homework-5-ec2-deploy-task
+            git reset --hard HEAD
+            git pull origin main
+            sudo docker compose -f docker-compose-prod.yml up -d --build
